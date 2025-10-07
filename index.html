@@ -4,11 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TestApp</title>
-    <base href="/testapp/" />
+
+    <title>💰 Expense Tracker</title>
+    <base href="/AYExpenseTracker/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="icon" type="image/png" href="wallet.png" />
     <link href="TestApp.styles.css" rel="stylesheet" />
 </head>
 
@@ -27,6 +28,47 @@
         <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+
+
+    <script>
+        window.downloadFile = (filename, base64) => {
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;base64,' + base64;
+            link.download = filename;
+            link.click();
+        }
+    </script>
+
+
+
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script>
+        window.exportExcel = (dataJson, fileName) => {
+            const ws = XLSX.utils.json_to_sheet(JSON.parse(dataJson));
+            // Style header row (navy background, white text)
+            const range = XLSX.utils.decode_range(ws['!ref']);
+            for (let C = range.s.c; C <= range.e.c; ++C) {
+                const cell_address = { c: C, r: 0 };
+                const cell_ref = XLSX.utils.encode_cell(cell_address);
+                if (!ws[cell_ref]) continue;
+                ws[cell_ref].s = {
+                    fill: { fgColor: { rgb: "000080" } }, // Navy
+                    font: { color: { rgb: "FFFFFF" }, bold: true }
+                };
+            }
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Transactions");
+            XLSX.writeFile(wb, fileName);
+        };
+    </script>
+
+
+
+
+
+
+
+
 </body>
 
 </html>
